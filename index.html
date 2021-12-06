@@ -7,118 +7,46 @@
   <link rel="shortcut icon" href="i/favicon.ico" type="image/x-icon">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="./css/style.css">
+  <script src="js/script.js"></script>
   <title>Тестовое задание</title>
 </head>
 
 <body>
   <div id="container">
-    <div class="list-view hidden">
+    <div class="list-view">
       <ul class="contacts-list">
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
-        <li class="list-item">
-          <span class="user-icon"></span>
-          <strong class="user-name">Павел</strong>
-        </li>
+        <template id="list-item-template">
+          <li class="list-item">
+            <span class="user-icon"></span>
+            <strong class="user-name"></strong>
+          </li>
+        </template>
       </ul>
     </div>
-    <div class="details-view">
+    <div class="details-view hidden">
       <div class="header">
         <div class="back"></div>
-        <div><span class="user-icon"></span><strong class="user-name">Павел</strong></div>
+        <div><span class="user-icon"></span><strong class="user-name"></strong></div>
       </div>
       <div>
         <ul>
           <li class="people-title">Друзья</li>
-          <li class="list-item"><i class="fa fa-male"></i><span class="user-name">Иван</span></li>
-          <li class="list-item"><i class="fa fa-male"></i><span class="user-name">Максим</span></li>
-          <li class="list-item"><i class="fa fa-male"></i><span class="user-name">Марат</span></li>
+          <li class="list-item" id="first-friend-item"><i class="fa fa-male"></i><span class="user-name"></span></li>
+          <li class="list-item" id="second-friend-item"><i class="fa fa-male"></i><span class="user-name"></span></li>
+          <li class="list-item" id="third-friend-item"><i class="fa fa-male"></i><span class="user-name"></span></li>
           <li class="people-title">Не в друзьях</li>
-          <li class="list-item"><i class="fa fa-male"></i><span class="user-name">Вася</span></li>
-          <li class="list-item"><i class="fa fa-male"></i><span class="user-name">Кирилл</span></li>
-          <li class="list-item"><i class="fa fa-male"></i><span class="user-name">Степан</span></li>
+          <li class="list-item" id="first-no-friend-item"><i class="fa fa-male"></i><span class="user-name"></span></li>
+          <li class="list-item" id="second-no-friend-item"><i class="fa fa-male"></i><span class="user-name"></span>
+          </li>
+          <li class="list-item" id="third-no-friend-item"><i class="fa fa-male"></i><span class="user-name"></span>
+          </li>
           <li class="people-title">Популярные люди</li>
-          <li class="list-item"><i class="fa fa-male"></i><span class="user-name">Елена</span></li>
-          <li class="list-item"><i class="fa fa-male"></i><span class="user-name">Оля</span></li>
-          <li class="list-item"><i class="fa fa-male"></i><span class="user-name">Никита</span></li>
+          <li class="list-item" id="first-most-popular-item"><i class="fa fa-male"></i><span class="user-name"></span>
+          </li>
+          <li class="list-item" id="second-most-popular-item"><i class="fa fa-male"></i><span class="user-name"></span>
+          </li>
+          <li class="list-item" id="third-most-popular-item"><i class="fa fa-male"></i><span class="user-name"></span>
+          </li>
         </ul>
       </div>
     </div>
