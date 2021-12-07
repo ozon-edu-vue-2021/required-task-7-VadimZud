@@ -1,13 +1,14 @@
 let users; // Массив пользователей, возвращенный с сервера
 let idUserMap = {}; // Будет мапить id пользователя в объект с данными о пользователе.
-// Это даст мне быстрый поиск пользователя по id, что очень полезно для обработки
-// списка друзей.
+// Это даст мне быстрый поиск пользователя по id.
 // Не использую массив, т.к. предполагаю, что id могут быть непоследовательными,
 // ненепрерывными и при этом очень большими. Не использую Map, т.к. мне не нужны
 // все возможности Map (с которыми, скорее всего, связаны дополнительные
 // накладные расходы)
 let popularUsers; //Три самых популярных пользователя
 
+// Куча предопределенных узлов разметки. Не очень красиво в коде, но
+// позволит сильно уменьшить число манипуляций с dom.
 let contactList;
 let listItemTemplate;
 let userName;
@@ -33,8 +34,9 @@ let backButton;
 let listView;
 let detailView;
 
-// В скрипте запускаются два независимых процесса: загрузка и подготовка данных
-// и загрузка dom. Отображать данные на dom можно, когда и то и другое завершилось.
+// В скрипте запускаются два независимых (в логическом смысле, не технически)
+// процесса: загрузка/подготовка данных и загрузка dom. 
+// Отображать данные на dom можно, когда и то и другое завершилось.
 // Оба процесса используют эти флаги для уведомления о своём завершении, и
 // тот из них, что завершится последним, запустит процедуру отображения.
 let dataPrepared = false;
@@ -47,8 +49,8 @@ let lastScroll;
 // отсортировать по соответствующему условию и выводить с начала списка.
 // Однако по заданию, выводится не более 3-х значений, а значит,
 // вместо использования сортировки, со сложностью порядка O(n*log(n))
-// или хуже, можно применить модернизированный алгоритм поиска максимума
-// с линейной сложностью.
+// или хуже, можно применить модернизированный алгоритм поиска
+// максимума/минимума с линейной сложностью.
 // arr - массив исходных данных
 // compare - функция сравнения, аналогичная sort
 // empty - "пустой" объект, которым инициализируется возвращаемый
@@ -79,6 +81,7 @@ function threeMost(arr, compare, empty) {
 // Предполагает, что каждый элемент в ignoreSet в искомом
 // массиве встречается только один раз, благодаря чему делает
 // дополнительные оптимизации (это верно для множества друзей).
+// "Портит" ignoreSet, если необходимо, нужно делать его копию.
 function threeMostWithIgnoreSet(arr, compare, empty, ignoreSet) {
     let first = empty;
     let second = empty;
@@ -171,7 +174,11 @@ function getThreeFriends(user) {
     if (user.threeFriends) {
         return user.threeFriends;
     }
-    user.threeFriends = threeMost(user.friends, compareByName, { name: String.fromCharCode(0xfffd), empty: true });
+    // String.fromCharCode(0xffff) - это символ с наибольшим кодом 
+    // (в utf-16, который использует js под капотом).
+    // Учитывая, что последний печатаемый символ - это U+FFFD,
+    // U+FFFF будет гарантированно больше любой видимой строки.
+    user.threeFriends = threeMost(user.friends, compareByName, { name: String.fromCharCode(0xffff), empty: true });
     return user.threeFriends;
 }
 
@@ -183,10 +190,11 @@ function getThreeNoFriends(user) {
     // почти в каждую карточку пользователя, тогда, возможно, будет
     // эффективнее предварительно отсортировать список пользователей
     // в prepareData, а потом извлекать из него первые три значения,
-    // игнорируя множество друзей. Подход. реализованный здесь, может
+    // игнорируя множество друзей. Подход, реализованный здесь, может
     // оказаться предпочтительнее, если пользователь просматривает небольшую
-    // долю карточек от общего числа пользователей.
-    user.threeNoFriends = threeMostWithIgnoreSet(users, compareByName, { name: String.fromCharCode(0xfffd), empty: true }, new Set(user.friends));
+    // долю карточек от общего числа пользователей. В любом случае,
+    // в реальных проектах будут нужны реальные замеры
+    user.threeNoFriends = threeMostWithIgnoreSet(users, compareByName, { name: String.fromCharCode(0xffff), empty: true }, new Set(user.friends));
     return user.threeNoFriends;
 }
 
@@ -206,15 +214,17 @@ function renderData() {
 
     contactList.append(contactListFragment);
 
-    firstMostPopularItem.classList.toggle("hidden", popularUsers[0].empty);
+    // Список самых популярных людей в каждой карточке одинаков, поэтому
+    // Выводим его сразу и больше не трогаем.
+    firstMostPopularItem.classList.toggle("hidden", Boolean(popularUsers[0].empty));
     if (!popularUsers[0].empty) {
         firstMostPopular.textContent = popularUsers[0].name;
     }
-    secondMostPopularItem.classList.toggle("hidden", popularUsers[1].empty);
+    secondMostPopularItem.classList.toggle("hidden", Boolean(popularUsers[1].empty));
     if (!popularUsers[1].empty) {
         secondMostPopular.textContent = popularUsers[1].name;
     }
-    thirdMostPopularItem.classList.toggle("hidden", popularUsers[2].empty);
+    thirdMostPopularItem.classList.toggle("hidden", Boolean(popularUsers[2].empty));
     if (!popularUsers[2].empty) {
         thirdMostPopular.textContent = popularUsers[2].name;
     }
@@ -231,28 +241,28 @@ function openCard(event) {
 
             userName.textContent = user.name;
 
-            firstFriendItem.classList.toggle("hidden", threeFriends[0].empty);
+            firstFriendItem.classList.toggle("hidden", Boolean(threeFriends[0].empty));
             if (!threeFriends[0].empty) {
                 firstFriend.textContent = threeFriends[0].name;
             }
-            secondFriendItem.classList.toggle("hidden", threeFriends[1].empty);
+            secondFriendItem.classList.toggle("hidden", Boolean(threeFriends[1].empty));
             if (!threeFriends[1].empty) {
                 secondFriend.textContent = threeFriends[1].name;
             }
-            thirdFriendItem.classList.toggle("hidden", threeFriends[2].empty);
+            thirdFriendItem.classList.toggle("hidden", Boolean(threeFriends[2].empty));
             if (!threeFriends[2].empty) {
                 thirdFriend.textContent = threeFriends[2].name;
             }
 
-            firstNoFriendItem.classList.toggle("hidden", threeNoFriends[0].empty);
+            firstNoFriendItem.classList.toggle("hidden", Boolean(threeNoFriends[0].empty));
             if (!threeNoFriends[0].empty) {
                 firstNoFriend.textContent = threeNoFriends[0].name;
             }
-            secondNoFriendItem.classList.toggle("hidden", threeNoFriends[1].empty);
+            secondNoFriendItem.classList.toggle("hidden", Boolean(threeNoFriends[1].empty));
             if (!threeNoFriends[1].empty) {
                 secondNoFriend.textContent = threeNoFriends[1].name;
             }
-            thirdNoFriendItem.classList.toggle("hidden", threeNoFriends[2].empty);
+            thirdNoFriendItem.classList.toggle("hidden", Boolean(threeNoFriends[2].empty));
             if (!threeNoFriends[2].empty) {
                 thirdNoFriend.textContent = threeNoFriends[2].name;
             }

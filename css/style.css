@@ -17,10 +17,6 @@ body {
   margin: 0 auto;
 }
 
-#container .hidden {
-  display: none;
-}
-
 #container .list-item {
   height: 70px;
   display: flex;
@@ -79,4 +75,8 @@ li.people-title {
   height: 70px;
   line-height: 70px;
   border-bottom: 1px solid #dddddd;
+}
+
+#container .hidden {
+  display: none;
 }
